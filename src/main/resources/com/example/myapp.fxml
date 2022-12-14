@@ -42,7 +42,7 @@
             </Button>
          </children>
       </HBox>
-      <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0">
         <columns>
           <TableColumn fx:id="completedCol" prefWidth="37.0" resizable="false" text="🗸" />
           <TableColumn fx:id="titleCol" prefWidth="250.0" text="Title" />

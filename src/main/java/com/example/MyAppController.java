@@ -17,7 +17,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 
 public class MyAppController {
@@ -166,6 +168,9 @@ public class MyAppController {
 		titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 		dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
 
+		completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
+		titleCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		
 		tableViewItems.addAll(dao.getAll());
 		
 		/* TODO: Set default sort 
