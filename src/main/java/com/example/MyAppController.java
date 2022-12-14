@@ -168,6 +168,7 @@ public class MyAppController {
 		titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 		dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
 
+		// CheckBoxTableCell.forTableColumn() needs some arguments for type inference
 		completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
 		titleCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		
