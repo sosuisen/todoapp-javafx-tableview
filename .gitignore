@@ -1,6 +1,23 @@
 # Compiled class file
 *.class
 
+# Eclipse Settings
+#.project
+#.classpath
+#.settings/
+
+# Locally stored "Eclipse launch configurations"
+# *.launch
+
+# Uncomment this line if you wish to ignore the project description file.
+# Typically, this file would be tracked if it contains build/dependency configurations:
+#.project
+
+build/
+
+bin/
+
+
 # Log file
 *.log
 
@@ -36,27 +53,7 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-#.project
-# JDT-specific (Eclipse Java Development Tools)
-#.classpath
 
-#.settings/
-.loadpath
-.recommenders
-
-# External tool builders
-.externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
-# *.launch
-
-# Uncomment this line if you wish to ignore the project description file.
-# Typically, this file would be tracked if it contains build/dependency configurations:
-#.project
-build/
-bin/
 
 # General
 .DS_Store
