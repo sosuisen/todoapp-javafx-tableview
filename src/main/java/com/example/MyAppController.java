@@ -48,7 +48,7 @@ public class MyAppController {
     private TableColumn<ToDo, String> titleCol;
 
     @FXML
-    private TableColumn<ToDo, String> dateCol;
+    private TableColumn<ToDo, LocalDate> dateCol;
 
     @FXML
     private TableColumn<ToDo, Void> deleteCol;
@@ -172,6 +172,15 @@ public class MyAppController {
 		completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
 		titleCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		
+//		dateCol.setCellFactory(new Callback<TableColumn<ToDo, LocalDate>, TableCell<ToDo, LocalDate>>() {  
+//	        public TableCell<ToDo, LocalDate> call(TableColumn<ToDo, LocalDate> col) {  
+//	            return new LocalDateTableCell<ToDo>(col);  
+//	        }  
+//	    });
+		// In short
+		dateCol.setCellFactory(col -> new LocalDateTableCell<ToDo>(col));
+
+		
 		tableViewItems.addAll(dao.getAll());
 		
 		/* TODO: Set default sort 
@@ -182,7 +191,7 @@ public class MyAppController {
 			if (title.equals(""))
 				return;
 			LocalDate localDate = datePicker.getValue(); // 2022-12-01
-			ToDo newToDo = dao.create(title, localDate.toString());
+			ToDo newToDo = dao.create(title, localDate);
 			tableViewItems.add(newToDo);
 			titleField.setText("");
 		};

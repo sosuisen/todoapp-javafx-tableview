@@ -4,8 +4,10 @@ import java.time.LocalDate;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -16,10 +18,11 @@ public class ToDo {
 	 * Local date string
 	 * e.g. 2022-12-01
 	 */
-	private StringProperty date = new SimpleStringProperty();
+	// private StringProperty date = new SimpleStringProperty();
+    private ObjectProperty<LocalDate> date = new SimpleObjectProperty<>();
 	private BooleanProperty completed = new SimpleBooleanProperty();
 
-	public ToDo(int id, String title, String date, boolean completed) {
+	public ToDo(int id, String title, LocalDate date, boolean completed) {
 		this.id.set(id);
 		this.title.set(title);
 		this.date.set(date);
@@ -42,26 +45,12 @@ public class ToDo {
 		this.title .set(title);
 	}
 
-	/**
-	 * @return date string e.g. 2022-12-01
-	 */
-	public String getDate() {
+	public LocalDate getDate() {
 		return date.get();
 	}
 
-	/**
-	 * @param date date string e.g. 2022-12-01
-	 */
-	public void setDate(String date) {
+	public void setDate(LocalDate date) {
 		this.date.set(date);
-	}
-
-	public LocalDate getLocalDate() {
-		return LocalDate.parse(date.get());
-	}
-
-	public void setLocalDate(LocalDate localDate) {
-		this.date.set(localDate.toString());
 	}
 
 	public boolean isCompleted() {
@@ -84,7 +73,7 @@ public class ToDo {
 		return title;
 	}
 	
-	public StringProperty dateProperty() {
+	public ObjectProperty<LocalDate> dateProperty() {
 		return date;
 	}
 }

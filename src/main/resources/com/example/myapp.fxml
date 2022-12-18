@@ -45,8 +45,8 @@
       <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0">
         <columns>
           <TableColumn fx:id="completedCol" prefWidth="37.0" resizable="false" text="🗸" />
-          <TableColumn fx:id="titleCol" prefWidth="250.0" text="Title" />
-            <TableColumn fx:id="dateCol" prefWidth="82.0" resizable="false" text="Date" />
+          <TableColumn fx:id="titleCol" prefWidth="210.0" text="Title" />
+            <TableColumn fx:id="dateCol" prefWidth="120.0" resizable="false" text="Date" />
             <TableColumn fx:id="deleteCol" prefWidth="40.0" resizable="false" text="🗑" />
         </columns>
       </TableView>
