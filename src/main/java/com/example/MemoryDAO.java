@@ -52,7 +52,9 @@ public class MemoryDAO implements DAO {
 
 	@Override
 	public ToDo create(String title, LocalDate date) {
-		int newId = todos.stream().max((todo1, todo2) -> todo1.getId() - todo2.getId()).get().getId() + 1;
+		int newId = 1;
+		if (todos.size() > 0) 
+			newId = todos.stream().max((todo1, todo2) -> todo1.getId() - todo2.getId()).get().getId() + 1;
 		var newToDo = new ToDo(newId, title, date, false);
 		todos.add(newToDo);
 

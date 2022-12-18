@@ -2,9 +2,11 @@ package com.example;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,6 +16,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -27,17 +30,6 @@ public class MyAppController {
 
 	DAO dao = new MemoryDAO(dataPath);
 
-	final String TODO_COMPLETED = "Completed";
-	final String TODO_TITLE = "Title";
-	final String TODO_DATE = "Date";
-	final LinkedHashMap<String, Integer> MENU = new LinkedHashMap<String, Integer>() {{
-		put(TODO_COMPLETED, 0);
-		put(TODO_TITLE, 1);
-		put(TODO_DATE, 2);
-	}};
-	final String SORT_ASCENDANT = "Ascendant";
-	final String SORT_DESCENDANT = "Descendant";
-	
 	@FXML
 	private TableView<ToDo> tableView;
 	
@@ -51,7 +43,7 @@ public class MyAppController {
     private TableColumn<ToDo, LocalDate> dateCol;
 
     @FXML
-    private TableColumn<ToDo, Void> deleteCol;
+    private TableColumn<ToDo, ToDo> deleteCol;
 
     
 	@FXML
@@ -81,49 +73,6 @@ public class MyAppController {
 
 	private ObservableList<ToDo> tableViewItems;
 
-	/*
-	private HBox createToDoHBox(ToDo todo) {
-		var completedCheckBox = new CheckBox();
-		completedCheckBox.setSelected(todo.isCompleted());
-		completedCheckBox.getStyleClass().add("todo-completed");
-		completedCheckBox.setOnAction(e -> {
-			dao.updateCompleted(todo.getId(), completedCheckBox.isSelected());
-		});
-
-		var titleField = new TextField(todo.getTitle());
-		titleField.getStyleClass().add("todo-title");
-		HBox.setHgrow(titleField, Priority.ALWAYS);
-		titleField.setOnAction(e -> {
-			dao.updateTitle(todo.getId(), titleField.getText());
-		});
-		titleField.focusedProperty().addListener((observable, oldProperty, newProperty) -> {
-			if (!newProperty) {
-				dao.updateTitle(todo.getId(), titleField.getText());
-			}
-		});
-
-		var datePicker = new DatePicker(todo.getLocalDate());
-		datePicker.getStyleClass().add("todo-date");
-		datePicker.setPrefWidth(105);
-		HBox.setHgrow(datePicker, Priority.NEVER);
-		datePicker.setOnAction(e -> {
-			dao.updateDate(todo.getId(), datePicker.getValue().toString());
-		});
-
-		var deleteBtn = new Button("Delete");
-		deleteBtn.getStyleClass().add("todo-delete");
-
-		var todoItem = new HBox(completedCheckBox, titleField, datePicker, deleteBtn);
-		todoItem.getStyleClass().add("todo-item");
-
-		deleteBtn.setOnAction(e -> {
-			dao.delete(todo.getId());
-			todoListItems.remove(todoItem);
-		});
-
-		return todoItem;
-	}
-*/
 	private void showInfo(String txt) {
 		Alert dialog = new Alert(AlertType.INFORMATION);
 		dialog.setHeaderText(null);
@@ -167,11 +116,13 @@ public class MyAppController {
 		completedCol.setCellValueFactory(new PropertyValueFactory<>("completed"));
 		titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 		dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+		// p.getValue() means ToDo object,
+		// so deleteCol is bound with ToDo object.
+        deleteCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
 
 		// CheckBoxTableCell.forTableColumn() needs some arguments for type inference
 		completedCol.setCellFactory(CheckBoxTableCell.forTableColumn(completedCol));
 		titleCol.setCellFactory(TextFieldTableCell.forTableColumn());
-		
 //		dateCol.setCellFactory(new Callback<TableColumn<ToDo, LocalDate>, TableCell<ToDo, LocalDate>>() {  
 //	        public TableCell<ToDo, LocalDate> call(TableColumn<ToDo, LocalDate> col) {  
 //	            return new LocalDateTableCell<ToDo>(col);  
@@ -180,12 +131,34 @@ public class MyAppController {
 		// In short
 		dateCol.setCellFactory(col -> new LocalDateTableCell<ToDo>(col));
 
+		deleteCol.setCellFactory(param -> new TableCell<ToDo, ToDo>() {
+		    private final Button deleteBtn = new Button("🗑");
+
+		    // deleteCol is bound with ToDo object by setCellValueFactory,
+			// so the 1st param of updateItem() is ToDo type. 
+		    protected void updateItem(ToDo todo, boolean empty) {
+		        super.updateItem(todo, empty);
+		        if (todo == null) {
+		            setGraphic(null);
+		            return;
+		        }
+		        setGraphic(deleteBtn);
+				deleteBtn.setPrefWidth(35);
+		        deleteBtn.setOnAction(
+		            e -> {
+		    			dao.delete(todo.getId());
+		            	getTableView().getItems().remove(todo);
+		            }
+		        );
+		    }
+		});
 		
-		tableViewItems.addAll(dao.getAll());
+		// Sort by Date
+		ArrayList<ToDo> todos = dao.getAll();
+		todos.sort(Comparator.comparing(todo -> todo.getDate()));
+		tableViewItems.addAll(todos);
 		
-		/* TODO: Set default sort 
-		 */	
-		
+	
 		EventHandler<ActionEvent> handler = e -> {
 			var title = titleField.getText();
 			if (title.equals(""))

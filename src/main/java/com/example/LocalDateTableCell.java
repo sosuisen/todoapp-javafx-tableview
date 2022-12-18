@@ -72,5 +72,6 @@ public class LocalDateTableCell<T> extends TableCell<T, LocalDate> {
 				setText(formatter.format(item));
 			}
 		}
+		getTableView().sort();
 	}
 }
