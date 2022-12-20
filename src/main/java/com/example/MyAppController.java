@@ -2,11 +2,10 @@ package com.example;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +17,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -152,11 +152,33 @@ public class MyAppController {
 		        );
 		    }
 		});
+
+		// Default order is sort by date column 
+		tableView.getSortOrder().add(dateCol);
 		
-		// Sort by Date
-		ArrayList<ToDo> todos = dao.getAll();
-		todos.sort(Comparator.comparing(todo -> todo.getDate()));
-		tableViewItems.addAll(todos);
+		// sortOrder is ObservableList that stores one or more TableColumns to be sorted.
+		// Each TableColumn has 3 sort states: ascending, descending and not sorted.
+		// If you would like to skip not sorted state, add removed TableColumn again to the sortOrder
+		// by observing its change.
+		// 
+		// See also https://stackoverflow.com/questions/52567754/javafx-tableview-column-sorting-has-three-states-why
+		tableView.getSortOrder().addListener((ListChangeListener.Change<? extends TableColumn<ToDo, ?>> change) -> {
+			while(change.next()) {
+				if(change.wasRemoved()) {
+					// TableColumn has been removed.
+					var removedSortCol = change.getRemoved().get(0);
+					if (change.getList().size() == 0) {
+						Platform.runLater(()->{
+							// Add removed column again later.
+							removedSortCol.setSortType(SortType.ASCENDING);
+							tableView.getSortOrder().add(removedSortCol);
+						});
+					}
+				}
+			}
+		});
+
+		tableViewItems.addAll(dao.getAll());
 		
 	
 		EventHandler<ActionEvent> handler = e -> {
@@ -167,6 +189,7 @@ public class MyAppController {
 			ToDo newToDo = dao.create(title, localDate);
 			tableViewItems.add(newToDo);
 			titleField.setText("");
+			tableView.sort();
 		};
 		titleField.setOnAction(handler);
 		addBtn.setOnAction(handler);
