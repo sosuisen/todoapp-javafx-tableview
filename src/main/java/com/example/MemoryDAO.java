@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.hildan.fxgson.FxGson;
@@ -18,18 +19,10 @@ import com.google.gson.stream.JsonWriter;
 
 public class MemoryDAO implements DAO {
 	// Can omit generic type in right-hand operand (diamond operator)
-	private ArrayList<ToDo> todos = new ArrayList<>() {
-		// Use instance initializer of anonymouse class
-		{
-			add(new ToDo(1, "Design", LocalDate.parse("2022-12-01"), true));
-			add(new ToDo(2, "Implementation", LocalDate.parse("2022-12-07"), false));
-		}
-	};
-	// If you use MemoryDAO's instance initializer,
-	// you need to write "storage." before "add" each time, which is a bit long.
-	//	{
-	//		storage.add(new ToDo(1, "", LocalDate.of(2022, 12, 1), false));
-	//	}
+	private ArrayList<ToDo> todos = new ArrayList<>(List.of(
+			new ToDo(1, "Design", LocalDate.parse("2022-12-01"), true),
+			new ToDo(2, "Implementation", LocalDate.parse("2022-12-07"), false)
+			));
 
 	public MemoryDAO(String dataPath) {
 		try {
